@@ -19,13 +19,15 @@ import re
 START_WEEK = datetime.datetime.now().isocalendar()[1]
 
 # assign new stderr
-sys.stderr = NewStderr()
+# sys.stderr = NewStderr()
 
 # save reference to old stderr
 oldstderr = sys.stderr
 
 # list of officers
 officer_list = []
+
+owner_id = open("owner-id.txt").read().strip()
 
 def check_output(s):
     """checks stderr for network error to properly exit"""
@@ -299,114 +301,35 @@ def exit_handler():
     # exit without calling anything else
     os._exit(0)
 
+def kill_handler(user_dict, event, slack_obj, response_handler):
+    if user_dict["user"]["id"] == owner_id:
+        response_handler(user_dict, event, slack_obj, "going down")
+        exit_handler()
+
+def whois_handler(user_dict, event, slack_obj, response_handler):
+    response_handler(user_dict, event, slack_obj, get_occupants())
+
+def response_handler(user_dict, event, slack_obj, response):
+    chan_id = event.get("channel")
+    slack_obj.api_call("chat.postMessage", as_user="true:", channel=chan_id, text=response)
+
 def handle_input(user_input, event, slack_obj):
     """ returns the message that a user would receive based on their input """
 
+    print user_input
+    
     message = ""
 
-    # if bot received text "whois"
-    if user_input == "whois":
-        # reply with list of officers
-        message = get_occupants()
+    try:
 
-    elif user_input == "kill":
-        try:
-            user_dict = json.loads(slack_obj.api_call("users.info",
-                user=event.get("user")))
+        user_dict = json.loads(slack_obj.api_call("users.info", user=event.get("user")))
+        
+        {"kill" : kill_handler,
+         "status" : status_handler,
+         "whois" : whois_handler }[str(user_input)](user_dict, event, slack_obj, response_handler)
 
-        except Exception:
-            message = "Failed to load users when looking up your name."
-
-        # if the user's id is Ryan's
-        if user_dict["user"]["id"] == "U0F8HE81Y":
-            # print for debugging log
-            print "Received kill command from slack"
-
-            # send message to Ryan to let him know we are restarting the script
-            message = "Killed it"
-            chan_id = event.get("channel")
-            slack_obj.api_call("chat.postMessage", as_user="true:",
-                channel=chan_id, text=message)
-
-            # exit script
-            exit_handler()
-        else:
-            message = "Nice try, you don't have the power to kill."
-
-    elif user_input == "status":
-        try:
-            user_dict = json.loads(slack_obj.api_call("users.info",
-                user=event.get("user")))
-        except Exception:
-            message = "Failed to load users when looking up your name."
-
-        # grabs real name of user
-        name = user_dict["user"]["profile"]["real_name"]
-
-        for officer in officer_list:
-            if officer.name == name:
-                officer.status = 1 - officer.status
-
-                if not officer.status:
-                    message = "You are currently tracked/online."
-
-                else:
-                    message = ("You are currently not tracked/offline. You are "
-                        "not visible to others but are still gaining time in "
-                        "the lab statistics. \n")
-
-    elif user_input == "weektop":
-        message = get_top_officers(False)
-
-    elif user_input == "alltop":
-        message = get_top_officers(True)
-
-    elif user_input == "version":
-        message = "petermanbot v B1.0.0 - Slimmed down and clean."
-
-    elif "time" in user_input:
-        try:
-            user_dict = json.loads(slack_obj.api_call("users.info",
-                user=event.get("user")))
-        except Exception:
-            message = "Failed to load users when looking up your name"
-
-        # grabs real name of user
-        name = user_dict["user"]["profile"]["real_name"]
-
-        for officer in officer_list:
-            if officer.name == name:
-
-                if user_input == "alltime":
-                    minutes = officer.minutes % 60
-                    hours = officer.minutes / 60
-                    message = ("You currently have a total of " + str(hours) +
-                        " hours, " + str(minutes) +
-                        " minutes in the lab for all time.")
-
-                elif user_input == "weektime":
-                    minutes = officer.week_min % 60
-                    hours = officer.week_min / 60
-                    message = ("You currently have a total of " + str(hours) +
-                        " hours, " + str(minutes) +
-                        " minutes in the lab for this week.")
-
-
-        if not message:
-            message = ("You are not in the google sheet or your"
-                "mistyped \"alltime\" or \"weektime\"")
-
-    else:
-        message = ("Here are the following commands I support:\n"
-        "whois - prints people currently in the lab \n"
-        "weektime - prints how long you were in the lab this past week \n"
-        "alltime - prints how long you were in lab for all time \n"
-        "status - toggle your status to online/offline \n"
-        "weektop - prints the top ten time totals for the week \n"
-        "alltop - prints the top ten time totals for all time \n"
-        "version - prints current version \n")
-
-    return message
+    except Exception as e:
+        print type(e), e.message, e.trace, user_input, type(user_input), event
 
 def main():
     """ main event loop for slack client polling"""
@@ -449,15 +372,15 @@ def main():
                     user_input = event.get("text").lower().strip()
 
                     # return a message based on the user's input
-                    message = handle_input(user_input, event, slack_obj)
+                    handle_input(user_input, event, slack_obj)
 
                 # if there is a message to send, then send it
                 # will not respond if received from bot message to prevent
                 # looping conversation with itself
-                if message and event.get("user") != bot_id:
-                    chan_id = event.get("channel")
-                    slack_obj.api_call("chat.postMessage", as_user="true:",
-                        channel=chan_id, text=message)
+                # if message and event.get("user") != bot_id:
+                #     chan_id = event.get("channel")
+                #     slack_obj.api_call("chat.postMessage", as_user="true:",
+                #         channel=chan_id, text=message)
 
             # delay
             time.sleep(1)
