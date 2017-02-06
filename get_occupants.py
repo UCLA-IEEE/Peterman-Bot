@@ -18,12 +18,6 @@ import sys
 import traceback
 import re
 
-# For use when writing out to correct spreadsheet
-START_WEEK = datetime.datetime.now().isocalendar()[1]
-
-# save reference to old stderr
-oldstderr = sys.stderr
-
 # list of officers
 officer_list = []
 
@@ -32,19 +26,14 @@ class Officer:
     name = ""
     mac_addr = ""
     status = 0 # 0 == online, 1 == tracked
-    minutes = 0
     is_in_lab = False
-    week_min = 0
     miss_count = 0 # if this gets to 5 we remove them from the list
                    # if they are seen on the scan we set it to 0
 
     def __init__(self):
         self.name = ""
         self.mac_addr = ""
-        print "making officer"
         self.status = 0
-        self.minutes = 0
-        self.week_min = 0
         self.is_in_lab = False
         self.miss_count = 0
 
@@ -151,43 +140,11 @@ def init_officers():
                 officer.mac_addr = str(row[i].lower())
             elif col_label == "Status":
                 officer.status = int(row[i])
-            elif col_label == "Minutes":
-                officer.minutes = int(row[i])
 
         # add officer to officer list
         officer_list.append(officer)
 
     file_handler.close()
-
-    # gets int corresponding to this week
-    this_week = datetime.datetime.now().isocalendar()[1]
-
-    # path to folder containing weekly records
-    week_path = "weekly/" + str(this_week)
-
-    # already have record for this week load it to weekly
-    if os.path.isfile(week_path):
-        file_handler = open(week_path, 'rb')
-        reader = csv.reader(file_handler)
-        # check every row of weekly csv
-        for row in reader:
-            # check all officers against current row
-            for officer in officer_list:
-                # if first col matches officer then set its weekly minutes
-                if row[0] == officer.name:
-                    officer.week_min = int(row[1])
-
-    # file does not exist yet we create it and write all 0's to it
-    else:
-        file_handler = open(week_path, 'w')
-        writer = csv.writer(file_handler)
-
-        # write 0's out to weekly csv since its a new file
-        for officer in officer_list:
-            row = [officer.name, 0]
-            writer.writerow(row)
-
-        file_handler.close()
 
     for officer in officer_list:
         officer.print_officer()
