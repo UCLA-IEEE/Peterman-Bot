@@ -398,26 +398,19 @@ def handle_input(user_input, event, slack_obj):
 
     else:
         message = ("Here are the following commands I support:\n"
-        "whois - prints people currently in the lab \n"
-        "weektime - prints how long you were in the lab this past week \n"
-        "alltime - prints how long you were in lab for all time \n"
-        "status - toggle your status to online/offline \n"
-        "weektop - prints the top ten time totals for the week \n"
-        "alltop - prints the top ten time totals for all time \n"
-        "version - prints current version \n")
+        "whois - prints people currently in the lab \n")
 
     return message
 
 def main():
-    """ main event loop for slack client polling"""
-
-    # read the api key into variable
+    # read bot token into variable
     with open('key.txt', 'r') as key_file:
         bot_token = key_file.read().replace('\n', '')
 
-    # init bot token and officers from google sheets
+    # initialize SlackClient
     slack_obj = SlackClient(bot_token)
 
+    # initialize officers
     init_officers()
 
     # the id of the bot
@@ -444,9 +437,10 @@ def main():
                 user_input = ""
                 message = ""
 
-                # format the input text
+                # get and format the input text
                 if event.get("text"):
                     user_input = event.get("text").lower().strip()
+                    print "Received user input: ", user_input
 
                     # return a message based on the user's input
                     message = handle_input(user_input, event, slack_obj)
@@ -464,7 +458,7 @@ def main():
             counter += 1
 
             # every minute
-            if counter >= 60:
+            if counter >= 10:
                 counter = 0
 
                 # run quietly
