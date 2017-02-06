@@ -174,35 +174,6 @@ def get_occupants():
 
     return officer_str
 
-def get_top_officers(all_time):
-    """ Returns a string of the top 10 total times among the officers """
-
-    if all_time:
-        top_list = sorted(officer_list, key=lambda x: x.minutes, reverse=True)
-        top_str = "Top of all time: \n"
-    else:
-        top_list = sorted(officer_list, key=lambda x: x.week_min, reverse=True)
-        top_str = "This Week's Top:\n"
-
-    for cur_officer in top_list:
-
-        if all_time:
-            hours = cur_officer.minutes / 60
-            minutes = cur_officer.minutes % 60
-        else:
-            hours = cur_officer.week_min / 60
-            minutes = cur_officer.week_min % 60
-
-        if cur_officer.status:
-            name = "John Cena (Anonymous)"
-        else:
-            name = cur_officer.name
-
-        top_str += (str(index) + ". " + name + " with " + str(hours) +
-            " hours and " + str(minutes) + " minutes."+ "\n")
-
-    return top_str
-
 def init_officers():
     """ Populates all the officer objects with their data from csv"""
 
@@ -309,93 +280,6 @@ def handle_input(user_input, event, slack_obj):
         # reply with list of officers
         message = get_occupants()
 
-    elif user_input == "kill":
-        try:
-            user_dict = json.loads(slack_obj.api_call("users.info",
-                user=event.get("user")))
-
-        except Exception:
-            message = "Failed to load users when looking up your name."
-
-        # if the user's id is Ryan's
-        if user_dict["user"]["id"] == "U0F8HE81Y":
-            # print for debugging log
-            print "Received kill command from slack"
-
-            # send message to Ryan to let him know we are restarting the script
-            message = "Killed it"
-            chan_id = event.get("channel")
-            slack_obj.api_call("chat.postMessage", as_user="true:",
-                channel=chan_id, text=message)
-
-            # exit script
-            exit_handler()
-        else:
-            message = "Nice try, you don't have the power to kill."
-
-    elif user_input == "status":
-        try:
-            user_dict = json.loads(slack_obj.api_call("users.info",
-                user=event.get("user")))
-        except Exception:
-            message = "Failed to load users when looking up your name."
-
-        # grabs real name of user
-        name = user_dict["user"]["profile"]["real_name"]
-
-        for officer in officer_list:
-            if officer.name == name:
-                officer.status = 1 - officer.status
-
-                if not officer.status:
-                    message = "You are currently tracked/online."
-
-                else:
-                    message = ("You are currently not tracked/offline. You are "
-                        "not visible to others but are still gaining time in "
-                        "the lab statistics. \n")
-
-    elif user_input == "weektop":
-        message = get_top_officers(False)
-
-    elif user_input == "alltop":
-        message = get_top_officers(True)
-
-    elif user_input == "version":
-        message = "petermanbot v B1.0.0 - Slimmed down and clean."
-
-    elif "time" in user_input:
-        try:
-            user_dict = json.loads(slack_obj.api_call("users.info",
-                user=event.get("user")))
-        except Exception:
-            message = "Failed to load users when looking up your name"
-
-        # grabs real name of user
-        name = user_dict["user"]["profile"]["real_name"]
-
-        for officer in officer_list:
-            if officer.name == name:
-
-                if user_input == "alltime":
-                    minutes = officer.minutes % 60
-                    hours = officer.minutes / 60
-                    message = ("You currently have a total of " + str(hours) +
-                        " hours, " + str(minutes) +
-                        " minutes in the lab for all time.")
-
-                elif user_input == "weektime":
-                    minutes = officer.week_min % 60
-                    hours = officer.week_min / 60
-                    message = ("You currently have a total of " + str(hours) +
-                        " hours, " + str(minutes) +
-                        " minutes in the lab for this week.")
-
-
-        if not message:
-            message = ("You are not in the google sheet or your"
-                "mistyped \"alltime\" or \"weektime\"")
-
     else:
         message = ("Here are the following commands I support:\n"
         "whois - prints people currently in the lab \n")
@@ -458,7 +342,7 @@ def main():
             counter += 1
 
             # every minute
-            if counter >= 10:
+            if counter >= 5:
                 counter = 0
 
                 # run quietly
