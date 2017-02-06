@@ -1,6 +1,9 @@
-""" Author: Ryan Peterman
+""" 
+Author: Ryan Peterman
+Contributors: Jeffrey Chan
 
-Lab Occupancy Sensor - to tell if anyone is in the lab"""
+Lab Occupancy Sensor - to tell if anyone is in the lab
+"""
 
 import subprocess
 import os
@@ -18,52 +21,11 @@ import re
 # For use when writing out to correct spreadsheet
 START_WEEK = datetime.datetime.now().isocalendar()[1]
 
-# assign new stderr
-# sys.stderr = NewStderr()
-
 # save reference to old stderr
 oldstderr = sys.stderr
 
 # list of officers
 officer_list = []
-
-def check_output(s):
-    """checks stderr for network error to properly exit"""
-
-    # error strings to look out for
-    e_str1 = "socket is already closed"
-    e_str2 = "[Errno 110] Connection timed out"
-    e_str3 = "Connection is already closed."
-
-    if any(re.match(regex, s) for regex in [e_str1, e_str2, e_str3]):
-
-        oldstderr.write("Caught Network Error\n")
-
-        # print stack trace
-        for line in traceback.format_stack():
-            oldstderr.write(line.strip() + '\n')
-
-        # exit in a well defined way
-        exit_handler()
-
-    else:
-        oldstderr.write(s)
-
-class NewStderr:
-    """ Wrapper for Stderr Object to check stream while running"""
-    def __init__(self):
-        pass
-
-    def __getattr__(self, name):
-        """called when attribute not defined for NewStderr is accessed"""
-        # if newstderr write is called
-        if name == 'write':
-            return lambda s: check_output(s)
-
-        return getattr(oldstderr, name)
-
-    def __setattr__(self, name, value):
-        return setattr(oldstderr, name, value)
 
 class Officer:
     """ Class to hold the data for each person """
@@ -138,12 +100,6 @@ def run_scan():
         # they have been missing for more than 5 minutes
         if officer.miss_count > 5:
             officer.is_in_lab = False
-
-        # if they are in the lab then add a minute
-        if officer.is_in_lab:
-            officer.minutes += 1
-            officer.week_min += 1
-            num_hits += 1
 
     return num_hits
 
