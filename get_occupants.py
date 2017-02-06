@@ -97,7 +97,7 @@ def run_scan():
         else:
             scan_hit = False
 
-        # they have been missing for more than 5 minutes
+        # they have been missing for more than 25 seconds?
         if officer.miss_count > 5:
             officer.is_in_lab = False
 
@@ -193,36 +193,6 @@ def init_officers():
         officer.print_officer()
 
 def exit_handler():
-    """ Writes out to the csv and exits """
-
-    # open file
-    file_handler = open('total_hours.csv', 'w')
-    writer = csv.writer(file_handler)
-
-    # Write out header
-    header_list = ["Name", "Mac Address", "Status", "Minutes"]
-    writer.writerow(header_list)
-
-    # write out every officer as a row in csv
-    for officer in officer_list:
-        row = [officer.name, officer.mac_addr, officer.status, officer.minutes]
-        writer.writerow(row)
-
-    file_handler.close()
-
-    # path to folder containing weekly records
-    week_path = "weekly/" + str(START_WEEK)
-
-    file_handler = open(week_path, 'w')
-    writer = csv.writer(file_handler)
-
-    # write 0's out to weekly csv since its a new file
-    for officer in officer_list:
-        row = [officer.name, officer.week_min]
-        writer.writerow(row)
-
-    file_handler.close()
-
     # exit without calling anything else
     os._exit(0)
 
@@ -257,7 +227,7 @@ def main():
     bot_id = "U0H7GEEJW"
 
     # counts up after every sleep(1)
-    # so we can poll when counter reachs 60 or 1 min
+    # so we can poll when counter reachs 5 sec
     counter = 0
 
     # connect to the bots feed
@@ -297,30 +267,10 @@ def main():
             time.sleep(1)
             counter += 1
 
-            # every minute
+            # every 5 seconds, run a scan quietly
             if counter >= 5:
                 counter = 0
-
-                # run quietly
                 num_hits = run_scan()
-
-                # check time for every 10 minutes
-                curr_time = time.localtime()
-                if curr_time.tm_min % 10 == 0:
-
-                    row = (str(curr_time.tm_hour) + ":" + str(curr_time.tm_min)
-                        + "," + str(num_hits) + "\n")
-
-                    with open("daily_activity/" + str(curr_time.tm_mday) +
-                        ".csv", 'a') as file_handler:
-
-                        file_handler.write(row)
-
-                # new day
-                if curr_time.tm_hour == 0:
-                    # write out the hours to weekly total once a day
-                    exit_handler()
-
 
     else:
         sys.stderr.write("Connection Failed: invalid token")
