@@ -162,7 +162,6 @@ def handle_input(user_input, event, slack_obj):
     if user_input == "whois":
         # reply with list of officers
         message = get_occupants()
-
     else:
         message = ("Here are the following commands I support:\n"
         "whois - prints people currently in the lab \n")
