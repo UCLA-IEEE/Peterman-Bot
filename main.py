@@ -2,6 +2,8 @@ import time
 from slackclient import SlackClient
 
 from scanner.scan import run_scan_for_officers
+from scanner.util import get_mac_address_map
+from handler.index import handle_input
 
 def main():
     with open('./config/key.txt', 'r') as key_file:
@@ -13,19 +15,25 @@ def main():
 
     timer = time.time()
 
-    officer_list = []
+    mac_address_map = get_mac_address_map()
+    officers_in_lab = run_scan_for_officers(mac_address_map)
 
     if slack_client.rtm_connect():
         while True:
+            response = ''
             event_list = slack_client.rtm_read()
             for event in event_list:
                 if event.get('text'):
                     user_input = event.get('text').lower().strip()
-                    print 'Received user input: ', user_input
+                    response = handle_input(user_input, officers_in_lab)
 
-            if time.time() - timer >= 5:
+            if time.time() - timer >= 10:
                 timer = time.time()
-                print '5 seconds have passed'
+                officers_in_lab = run_scan_for_officers(mac_address_map)
+
+            if response and event.get('user') != bot_id:
+                channel_id = event.get('channel')
+                slack_client.api_call('chat.postMessage', as_user='true', channel=channel_id, text=response)
 
     else:
         print 'Connection Failed: Invalid Token'
