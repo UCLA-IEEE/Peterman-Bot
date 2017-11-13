@@ -16,6 +16,4 @@ class Scanner(object):
                 if mac_address in line:
                     officers_in_lab.append(key)
 
-        print officers_in_lab
-
         return officers_in_lab
