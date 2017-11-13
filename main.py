@@ -5,7 +5,7 @@ from PetermanBot.PetermanBot import PetermanBot
 
 def main():
     # get bot_token and bot_id
-    with open('./config/key.txt', 'r') as key_file:
+    with open('./PetermanBot/config/key.txt', 'r') as key_file:
         bot_token = key_file.read().replace('\n', '')
 
     bot_id = "U0H7GEEJW"
