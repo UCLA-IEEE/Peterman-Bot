@@ -9,9 +9,9 @@ class InputHandler(object):
         }
 
         if user_input not in handler_map:
-            handleUnknownInput(handler_map)
+            self.handleUnknownInput(handler_map, channel_id)
         else:
-            handle_map[user_input]
+            handler_map[user_input]
 
     def handleWhoIs(self, officers_in_lab, channel_id):
         if len(officers_in_lab) == 0:
@@ -21,9 +21,9 @@ class InputHandler(object):
 
         self.sendMessage(message, channel_id)
 
-    def handleUnknownInput(self, hanlder_map, channel_id):
+    def handleUnknownInput(self, handler_map, channel_id):
         message = "Here are the commands that I support:\n"
-        for key in knownCommands:
+        for key in handler_map:
             message += key + '\n'
 
         self.sendMessage(message, channel_id)

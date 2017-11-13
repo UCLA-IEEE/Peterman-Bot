@@ -25,6 +25,7 @@ class PetermanBot(object):
 
     def run_scan_for_officers(self):
         self.officers_in_lab = self.scanner.scan_arp(self.mac_address_map)
+        print self.officers_in_lab
 
     def handle_events(self):
         event_list = self.slack_client.rtm_read()
@@ -35,4 +36,5 @@ class PetermanBot(object):
                 self.handle_input(user_input, channel_id)
 
     def handle_input(self, user_input, channel_id):
+        print self.officers_in_lab
         self.input_handler.handle_input(user_input, self.officers_in_lab, channel_id)
