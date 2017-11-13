@@ -24,7 +24,6 @@ class PetermanBot(object):
         return mac_address_map
 
     def run_scan_for_officers(self):
-        print 'this', self.officers_in_lab
         self.officers_in_lab = self.scanner.scan_arp(self.mac_address_map)
 
     def handle_events(self):
