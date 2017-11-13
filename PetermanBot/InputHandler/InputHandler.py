@@ -2,22 +2,53 @@ class InputHandler(object):
 
     def __init__(self, slack_client):
         self.slack_client = slack_client
+        with open('./PetermanBot/config/owner.txt', 'r') as owner_file:
+            self.owner_id = owner_file.read().replace('\n', '')
+        self.stats = {}
 
-    def handle_input(self, user_input, officers_in_lab, channel_id):
+    def handle_input(self, user_input, officers_in_lab, channel_id, event):
         handler_map = {
             "whois": self.handleWhoIs
         }
 
-        if user_input not in handler_map:
+        admin_map = {
+            "kill": self.handleKill,
+            "stats": self.handleStats
+        }
+
+        if user_input not in handler_map and user_input not in admin_map:
             self.handleUnknownInput(handler_map, channel_id)
+        elif user_input in admin_map:
+            if event.get('user') != self.owner_id:
+                self.handleUnknownInput(handler_map, channel_id)
+            else:
+                admin_map[user_input](channel_id)
+
+            if event.get('user') != self.owner_id:
+                self.record_input(user_input)
         else:
             handler_map[user_input](officers_in_lab, channel_id)
+
+            if event.get('user') != self.owner_id:
+                self.record_input(user_input)
 
     def handleWhoIs(self, officers_in_lab, channel_id):
         if len(officers_in_lab) == 0:
             message = "There doesn't seem to be any officers in the lab right now."
         else:
             message = "Here is the list of officers in the lab:\n" + "\n".join(officers_in_lab)
+
+        self.sendMessage(message, channel_id)
+
+    def handleKill(self, channel_id):
+        message = "Peterman Bot shutting down. See ya later!"
+        self.sendMessage(message, channel_id)
+        exit()
+
+    def handleStats(self,channel_id):
+        message = "Here are my stats since my last restart:\n"
+        for key in self.stats:
+            message += key + ': ' + str(self.stats[key]) + ' calls\n'
 
         self.sendMessage(message, channel_id)
 
@@ -30,3 +61,9 @@ class InputHandler(object):
 
     def sendMessage(self, message, channel_id):
         self.slack_client.api_call('chat.postMessage', as_user='true', channel=channel_id, text=message)
+
+    def record_input(self, user_input):
+        if user_input not in self.stats:
+            self.stats[user_input] = 1
+        else:
+            self.stats[user_input] += 1

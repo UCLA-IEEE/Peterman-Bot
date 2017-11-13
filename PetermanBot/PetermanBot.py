@@ -33,7 +33,7 @@ class PetermanBot(object):
             if event.get('text') and event.get('user') != self.bot_id:
                 channel_id = event.get('channel')
                 user_input = event.get('text').lower().strip()
-                self.handle_input(user_input, channel_id)
+                self.handle_input(user_input, channel_id, event)
 
-    def handle_input(self, user_input, channel_id):
-       self.input_handler.handle_input(user_input, self.officers_in_lab, channel_id)
+    def handle_input(self, user_input, channel_id, event):
+       self.input_handler.handle_input(user_input, self.officers_in_lab, channel_id, event)
