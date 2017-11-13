@@ -10,7 +10,8 @@ class PetermanBot(object):
         self.slack_client = slack_client
         self.mac_address_map = self.get_mac_address_map()
         self.scanner = Scanner()
-        self.officers_in_lab = self.run_scan_for_officers()
+        self.officers_in_lab = []
+        self.run_scan_for_officers()
         self.input_handler = InputHandler(slack_client)
 
     def get_mac_address_map(self):

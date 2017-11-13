@@ -2,3 +2,4 @@ supervisor_log.txt
 key.txt
 owner-id.txt
 .DS_Store
+.idea/

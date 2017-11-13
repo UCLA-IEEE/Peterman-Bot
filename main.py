@@ -17,9 +17,9 @@ def main():
         print 'Connection Failed: Invalid Token'
         exit()
 
-    timer = time.time()
-
     peterman_bot = PetermanBot(bot_token, bot_id, slack_client)
+
+    timer = time.time()
 
     # continuously have PetermanBot handle events
     # every 10 seconds, have PetermanBot re-scan the network
