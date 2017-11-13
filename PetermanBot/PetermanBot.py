@@ -9,8 +9,8 @@ class PetermanBot(object):
         self.bot_id = bot_id
         self.slack_client = slack_client
         self.mac_address_map = self.get_mac_address_map()
-        self.officers_in_lab = []
         self.scanner = Scanner()
+        self.officers_in_lab = self.run_scan_for_officers()
         self.input_handler = InputHandler(slack_client)
 
     def get_mac_address_map(self):
@@ -24,12 +24,13 @@ class PetermanBot(object):
         return mac_address_map
 
     def run_scan_for_officers(self):
+        print 'this', self.officers_in_lab
         self.officers_in_lab = self.scanner.scan_arp(self.mac_address_map)
 
     def handle_events(self):
-        event_list = self.slack_client.rtm.read()
+        event_list = self.slack_client.rtm_read()
         for event in event_list:
-            if event.get('text') and event.get('user') != bot_id:
+            if event.get('text') and event.get('user') != self.bot_id:
                 channel_id = event.get('channel')
                 user_input = event.get('text').lower().strip()
                 self.handle_input(user_input, channel_id)

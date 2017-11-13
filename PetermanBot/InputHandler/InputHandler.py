@@ -3,7 +3,7 @@ class InputHandler(object):
     def __init__(self, slack_client):
         self.slack_client = slack_client
 
-    def handle_input(self, user_input, channel_id):
+    def handle_input(self, user_input, officers_in_lab, channel_id):
         handler_map = {
             "whois": self.handleWhoIs(officers_in_lab, channel_id)
         }
