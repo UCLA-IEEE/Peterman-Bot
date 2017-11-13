@@ -5,13 +5,13 @@ class InputHandler(object):
 
     def handle_input(self, user_input, officers_in_lab, channel_id):
         handler_map = {
-            "whois": self.handleWhoIs(officers_in_lab, channel_id)
+            "whois": self.handleWhoIs
         }
 
         if user_input not in handler_map:
             self.handleUnknownInput(handler_map, channel_id)
         else:
-            handler_map[user_input]
+            handler_map[user_input](officers_in_lab, channel_id)
 
     def handleWhoIs(self, officers_in_lab, channel_id):
         if len(officers_in_lab) == 0:
