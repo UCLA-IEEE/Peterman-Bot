@@ -35,5 +35,4 @@ class PetermanBot(object):
                 self.handle_input(user_input, channel_id)
 
     def handle_input(self, user_input, channel_id):
-        print self.officers_in_lab
-        self.input_handler.handle_input(user_input, self.officers_in_lab, channel_id)
+       self.input_handler.handle_input(user_input, self.officers_in_lab, channel_id)
