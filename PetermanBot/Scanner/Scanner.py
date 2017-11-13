@@ -14,7 +14,6 @@ class Scanner(object):
             mac_address = mac_address_map[key]
             for line in arp_output.splitlines():
                 if mac_address in line:
-                    print 'found ', mac_address, ' in ', line
                     officers_in_lab.append(key)
 
         return officers_in_lab
