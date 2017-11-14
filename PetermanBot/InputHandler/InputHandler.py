@@ -53,10 +53,18 @@ class InputHandler(object):
         date = datetime.datetime.today()
         dayOfTheWeek = date.weekday()
         hoursSinceEight = date.hour - 8
-        officers = data[hoursSinceEight + 1][dayOfTheWeek + 1]
 
-        message = 'Here are the officers signed up for this hour:\n'
-        message += officers
+        if hoursSinceEight > 11:
+            hoursSinceEight = 11
+
+        if dayOfTheWeek > 4:
+            message = 'No one is obligated to be in here on the weekends!'
+        elif hoursSinceEight < 0:
+            message = "It's too early for anyone to be in the lab!"
+        else:
+            officers = data[hoursSinceEight + 1][dayOfTheWeek + 1]
+            message = 'Here are the officers signed up for this hour:\n'
+            message += officers
 
         self.sendMessage(message, channel_id)
 
