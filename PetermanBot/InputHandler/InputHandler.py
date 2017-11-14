@@ -1,3 +1,5 @@
+import urllib2, json, datetime
+
 class InputHandler(object):
 
     def __init__(self, slack_client):
@@ -8,7 +10,8 @@ class InputHandler(object):
 
     def handle_input(self, user_input, officers_in_lab, channel_id, event):
         handler_map = {
-            "whois": self.handleWhoIs
+            "whois": self.handleWhoIs,
+            "whoshould": self.handleWhoIsSupposedToBe
         }
 
         admin_map = {
@@ -37,6 +40,23 @@ class InputHandler(object):
             message = "There doesn't seem to be any officers in the lab right now."
         else:
             message = "Here is the list of officers in the lab:\n" + "\n".join(officers_in_lab)
+
+        self.sendMessage(message, channel_id)
+
+    def handleWhoIsSupposedToBe(self, officers_in_lab, channel_id):
+        with open('./PetermanBot/config/google_api_key.txt', 'r') as key_file:
+            api_key = key_file.read().replace('\n', '')
+        spreadsheet_id = '1pYy3YIyndz-xe2BTZQxWkEPFuxomc7lJTKdm988trOA'
+        api_url = 'https://sheets.googleapis.com/v4/spreadsheets/' + spreadsheet_id + '/values/Fall%202017!A1:G13?key=' + api_key
+        response = json.loads(urllib2.urlopen(api_url).read())
+        data = response['values']
+        date = datetime.datetime.today()
+        dayOfTheWeek = date.weekday()
+        hoursSinceEight = date.hour - 8
+        officers = data[hoursSinceEight + 1][dayOfTheWeek + 1]
+
+        message = 'Here are the officers signed up for this hour:\n'
+        message += officers
 
         self.sendMessage(message, channel_id)
 
