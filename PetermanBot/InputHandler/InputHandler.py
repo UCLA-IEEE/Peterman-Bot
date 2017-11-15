@@ -71,7 +71,7 @@ class InputHandler(object):
             message = 'Here are the officers signed up for this hour:\n'
             message += officers
             message += '\nHere are the officers that are signed up for the next hour:\n'
-            messages += nextOfficers
+            message += nextOfficers
 
         self.sendMessage(message, channel_id)
 

@@ -8,7 +8,8 @@ def main():
     with open('./PetermanBot/config/key.txt', 'r') as key_file:
         bot_token = key_file.read().replace('\n', '')
 
-    bot_id = "U0H7GEEJW"
+    with open('./PetermanBot/config/bot_id.txt', 'r') as bot_id_file:
+        bot_id = bot_id_file.read().replace('\n', '')
 
     # initialize slack client object
     slack_client = SlackClient(bot_token)
