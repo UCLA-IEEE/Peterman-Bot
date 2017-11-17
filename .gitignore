@@ -5,6 +5,7 @@ owner.txt
 .idea/
 google_api_key.txt
 bot_id.txt
+config.json
 
 ### Python .gitignore stuff
 
