@@ -1,11 +1,12 @@
 import urllib2, json, datetime
 
+from PetermanBot.config import config
+
 class InputHandler(object):
 
     def __init__(self, slack_client):
         self.slack_client = slack_client
-        with open('./PetermanBot/config/owner.txt', 'r') as owner_file:
-            self.owner_id = owner_file.read().replace('\n', '')
+        self.owner_id = config['owner']
         self.stats = {}
 
     def handle_input(self, user_input, officers_in_lab, channel_id, event):
@@ -44,8 +45,7 @@ class InputHandler(object):
         self.sendMessage(message, channel_id)
 
     def handleWhoIsSupposedToBe(self, officers_in_lab, channel_id):
-        with open('./PetermanBot/config/google_api_key.txt', 'r') as key_file:
-            api_key = key_file.read().replace('\n', '')
+        api_key = config['GOOGLE_API_KEY']
         spreadsheet_id = '1pYy3YIyndz-xe2BTZQxWkEPFuxomc7lJTKdm988trOA'
         api_url = 'https://sheets.googleapis.com/v4/spreadsheets/' + spreadsheet_id + '/values/Fall%202017!A1:G13?key=' + api_key
         response = json.loads(urllib2.urlopen(api_url).read())
