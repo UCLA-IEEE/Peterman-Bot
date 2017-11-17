@@ -1,15 +1,12 @@
 import time
 from slackclient import SlackClient
 
+from PetermanBot.config import config
 from PetermanBot.PetermanBot import PetermanBot
 
 def main():
-    # get bot_token and bot_id
-    with open('./PetermanBot/config/key.txt', 'r') as key_file:
-        bot_token = key_file.read().replace('\n', '')
-
-    with open('./PetermanBot/config/bot_id.txt', 'r') as bot_id_file:
-        bot_id = bot_id_file.read().replace('\n', '')
+    bot_token = config['bot_key']
+    bot_id = config['bot_id']
 
     # initialize slack client object
     slack_client = SlackClient(bot_token)
