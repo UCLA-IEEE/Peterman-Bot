@@ -1,6 +1,7 @@
 import csv
-from Scanner.Scanner import Scanner
-from InputHandler.InputHandler import InputHandler
+
+from Scanner import Scanner
+from InputHandler import InputHandler
 
 class PetermanBot(object):
 

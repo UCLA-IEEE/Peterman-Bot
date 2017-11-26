@@ -1,10 +1,6 @@
-supervisor_log.txt
-key.txt
-owner.txt
+log.txt
 .DS_Store
 .idea/
-google_api_key.txt
-bot_id.txt
 config.json
 
 ### Python .gitignore stuff

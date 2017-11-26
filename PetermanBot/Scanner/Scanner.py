@@ -6,7 +6,11 @@ class Scanner(object):
         pass
 
     def scan_arp(self, mac_address_map):
-        arp_output = subprocess.check_output(["sudo", "arp-scan", "-l"])
+        try:
+            arp_output = subprocess.check_output(["sudo", "arp-scan", "-l"])
+        except CalledProcessError:
+            print 'Error in running arp-scan for network output.'
+            exit()
 
         officers_in_lab = []
 
