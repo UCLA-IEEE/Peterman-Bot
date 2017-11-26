@@ -1,10 +1,14 @@
 import time
 from slackclient import SlackClient
 
-from PetermanBot.config import config
-from PetermanBot.PetermanBot import PetermanBot
+from PetermanBot import config, PetermanBot
 
 def main():
+    """
+    Creates and instance of PetermanBot, then continuously has it
+    handle events and scan the network for officers.
+    """
+
     bot_token = config['bot_key']
     bot_id = config['bot_id']
 
