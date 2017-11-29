@@ -1,7 +1,7 @@
 import csv
 
-from Scanner import Scanner
-from InputHandler import InputHandler
+from .scanner import Scanner
+from .input_handler import InputHandler
 
 class PetermanBot(object):
 
@@ -16,7 +16,7 @@ class PetermanBot(object):
         self.input_handler = InputHandler(slack_client)
 
     def get_mac_address_map(self):
-        file_handler = open('./PetermanBot/config/officers.csv', 'rb')
+        file_handler = open('./PetermanBot/config/officers.csv', 'r')
         reader = csv.reader(file_handler)
 
         mac_address_map = {}

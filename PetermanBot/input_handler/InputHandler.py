@@ -1,4 +1,4 @@
-import urllib2, json, datetime
+import requests, json, datetime
 
 from PetermanBot.config import config
 
@@ -48,7 +48,7 @@ class InputHandler(object):
         api_key = config['GOOGLE_API_KEY']
         spreadsheet_id = '1pYy3YIyndz-xe2BTZQxWkEPFuxomc7lJTKdm988trOA'
         api_url = 'https://sheets.googleapis.com/v4/spreadsheets/' + spreadsheet_id + '/values/Fall%202017!A1:G13?key=' + api_key
-        response = json.loads(urllib2.urlopen(api_url).read())
+        response = requests.get(api_url).json()
         data = response['values']
         date = datetime.datetime.today()
         dayOfTheWeek = date.weekday()
@@ -76,7 +76,7 @@ class InputHandler(object):
             self.sendMessage(message, channel_id)
 
         except Exception:
-            print 'Error in handling whoshould command!'
+            print('Error in handling whoshould command!')
             exit()
 
     def handleKill(self, channel_id):

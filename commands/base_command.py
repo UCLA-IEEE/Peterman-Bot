@@ -1,4 +1,4 @@
-class Command:
+class BaseCommand:
     """Base class for a Command object.
 
     Command objects act as the API - they call the PetermanBot, which does the

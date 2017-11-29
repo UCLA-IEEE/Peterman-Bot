@@ -1,1 +1,1 @@
-from Scanner import Scanner
+from .Scanner import Scanner

@@ -1,5 +1,4 @@
 import subprocess
-from sets import Set
 
 class Scanner(object):
 
@@ -16,12 +15,12 @@ class Scanner(object):
         """
 
         try:
-            arp_output = subprocess.check_output(["sudo", "arp-scan", "-l"])
+            arp_output = str(subprocess.check_output(["sudo", "arp-scan", "-l"]))
         except CalledProcessError:
-            print 'Error in running arp-scan for network output.'
+            print('Error in running arp-scan for network output.')
             exit()
 
-        officers_in_lab = Set()
+        officers_in_lab = set()
 
         for key in mac_address_map:
             mac_address = mac_address_map[key]

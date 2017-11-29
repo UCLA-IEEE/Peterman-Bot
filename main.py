@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import time
 from slackclient import SlackClient
 
@@ -16,7 +17,7 @@ def main():
     slack_client = SlackClient(bot_token)
     connection = slack_client.rtm_connect()
     if not connection:
-        print 'Connection Failed: Invalid Token'
+        print('Connection Failed: Invalid Token')
         exit()
 
     peterman_bot = PetermanBot(bot_token, bot_id, slack_client)

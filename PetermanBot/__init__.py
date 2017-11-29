@@ -1,2 +1,2 @@
-from PetermanBot import PetermanBot
-from config import config
+from .PetermanBot import PetermanBot
+from .config import config
