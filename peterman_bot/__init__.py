@@ -1,2 +1,3 @@
 from .PetermanBot import PetermanBot
-from .config import config
+
+peterman_bot = PetermanBot()
