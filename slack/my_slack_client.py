@@ -19,19 +19,21 @@ class MySlackClient:
     
     def get_user_input(self):
         """Returns the current user input from the slack client, as well
-            as the channel to respond to.
+            as the channel to respond to, and the ID of the user.
 
         Returns:
-            str, str: Channel id to respond to, actual user input. If no input, returns None.
+            str, str, str: User id, channel id to respond to, actual user input.
+                If no input, returns None.
         """
         event_list = self.slack_client.rtm_read()
         for event in event_list:
             if event.get('text') and event.get('user') != self.bot_id:
                 channel_id = event.get('channel')
+                user_id = event.get('user')
                 user_input = event.get('text').lower().strip()
-                return channel_id, user_input
+                return user_id, channel_id, user_input
         
-        return None, None
+        return None, None, None
 
     def send_user_message(self, channel_id, message):
         """Send a slack message over a given channel ID."""

@@ -27,13 +27,13 @@ def main():
     start_pb_timers(pb)
 
     while True:
-        channel_id, user_input = slack_client.get_user_input()
+        user_id, channel_id, user_input = slack_client.get_user_input()
         if channel_id:
             command_text, args, kwargs = parse_command(user_input)
 
             if not validate_command(command_text):
                 message = "Invalid command. Type `help` for help."
-            elif not validate_command_permissions(command_text, channel_id):
+            elif not validate_command_permissions(command_text, user_id):
                 message = "You do not have permissions to use that command."
             else:
                 command = command_mapping[command_text]()
