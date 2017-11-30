@@ -6,8 +6,11 @@ install:
 	virtualenv -p /usr/bin/python3 $(VENV_NAME)
 	$(ROOT_DIR)/$(VENV_NAME)/bin/pip install -r requirements.txt
 
+dev:
+	$(ROOT_DIR)/$(VENV_NAME)/bin/python -B main.py
+
 run:
-	$(ROOT_DIR)/venv/bin/python -B main.py
+	$(ROOT_DIR)/$(VENV_NAME)/bin/python main.py
 
 log:
 	(python -B main.py) >> log.txt 2>&1
