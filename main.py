@@ -40,7 +40,7 @@ def main():
                 message = command.action()
 
             slack_client.send_user_message(channel_id, message)
-            if command_text == kill_command_name and validate_command_permissions(command_text, channel_id):
+            if command_text == kill_command_name and validate_command_permissions(command_text, user_id):
                 os._exit(0)
 
 def start_pb_timers(pbot):
