@@ -1,12 +1,15 @@
+ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+VENV_NAME:=venv
+
 install:
-	pip install -r requirements.txt
+	mkdir $(VENV_NAME)
+	virtualenv -p /usr/bin/python3 $(VENV_NAME)
+	$(ROOT_DIR)/$(VENV_NAME)/bin/pip install -r requirements.txt
 
 run:
-	python -B main.py
+	$(ROOT_DIR)/venv/bin/python -B main.py
 
 log:
-	touch log.txt
-	chown $USER log.txt
 	(python -B main.py) >> log.txt 2>&1
 
 clean:
