@@ -38,7 +38,7 @@ class PetermanBot(object):
     def get_officer_lab_hour_data(self):
         api_key = config['GOOGLE_API_KEY']
         spreadsheet_id = config['SPREADSHEET_ID']
-        api_url = 'https://sheets.googleapis.com/v4/spreadsheets/' + spreadsheet_id + '/values/Fall%202017!A1:G13?key=' + api_key
+        api_url = 'https://sheets.googleapis.com/v4/spreadsheets/' + spreadsheet_id + '/values/Spring%202018!A1:G13?key=' + api_key
         response = requests.get(api_url).json()
         data = response['values']
         return data
